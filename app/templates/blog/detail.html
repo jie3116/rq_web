@@ -1,0 +1,16 @@
+﻿{% extends "layout.html" %}
+{% block title %}{{ post.title }} - {{ SCHOOL_NAME }}{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:920px">
+  <h1 class="fw-bold">{{ post.title }}</h1>
+  <div class="text-muted mb-3">{{ post.published_at.strftime("%d %b %Y") }}</div>
+
+  {% if post.cover_url %}
+  <img src="{{ post.cover_url }}" alt="{{ post.title }}" class="rounded-4 shadow-sm mb-4" style="width:100%;max-height:420px;object-fit:cover;">
+  {% endif %}
+
+  <article class="prose">
+    {{ post.body|safe }}
+  </article>
+</div>
+{% endblock %}

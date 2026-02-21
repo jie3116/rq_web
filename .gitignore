@@ -1,0 +1,92 @@
+# =========================
+# PYTHON
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# FLASK
+# =========================
+instance/
+.webassets-cache
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Flask local config
+.env
+.env.*
+!.env.example
+!.env.local.example
+!.env.production.example
+
+# =========================
+# DATABASE
+# =========================
+*.sqlite
+*.db
+*.sqlite3
+
+# PostgreSQL dumps / backups
+*.sql
+backup_*.sql
+
+# =========================
+# MIGRATIONS (ALEMBIC)
+# =========================
+# migration scripts harus disimpan!
+# hanya cache yang di-ignore
+migrations/__pycache__/
+
+# =========================
+# IDE / EDITOR
+# =========================
+
+# PyCharm
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# DOCKER
+# =========================
+docker-compose.override.yml
+*.pid
+
+# =========================
+# STATIC / UPLOADS (opsional)
+# =========================
+# jika nanti ada upload user
+uploads/
+media/
+
+# =========================
+# NODE (kalau nanti pakai frontend build)
+# =========================
+node_modules/
+npm-debug.log*
+yarn-error.log*

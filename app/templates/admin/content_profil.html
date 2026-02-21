@@ -1,0 +1,45 @@
+﻿{% extends "layout.html" %}
+{% block title %}Profil - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Profil</h1>
+  {% include "admin/_menu.html" %}
+
+  <form method="POST" enctype="multipart/form-data" class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <label class="form-label">Sejarah</label>
+          <textarea class="form-control js-richtext" name="about_history" rows="4">{{ setting.about_history }}</textarea>
+          <label class="form-label mt-3">Visi</label>
+          <textarea class="form-control js-richtext" name="about_vision" rows="3">{{ setting.about_vision }}</textarea>
+          <label class="form-label mt-3">Misi</label>
+          <textarea class="form-control js-richtext" name="about_mission" rows="4">{{ setting.about_mission }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <label class="form-label">Nama Kepala Sekolah</label>
+          <input class="form-control" name="headmaster_name" value="{{ setting.headmaster_name }}">
+          <label class="form-label mt-3">Sambutan Kepala Sekolah</label>
+          <textarea class="form-control js-richtext" name="headmaster_quote" rows="5">{{ setting.headmaster_quote }}</textarea>
+          <label class="form-label mt-3">URL Foto (opsional)</label>
+          <input class="form-control" name="headmaster_photo_url" value="{{ setting.headmaster_photo_url }}">
+          <label class="form-label mt-3">Upload Foto Kepala Sekolah</label>
+          <input class="form-control" type="file" name="headmaster_photo">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <button class="btn btn-dark">Simpan Profil</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}

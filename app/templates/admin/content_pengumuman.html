@@ -1,0 +1,50 @@
+﻿{% extends "layout.html" %}
+{% block title %}Pengumuman - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Pengumuman</h1>
+  {% include "admin/_menu.html" %}
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-semibold">Tambah Pengumuman</h5>
+      <form method="POST" class="row g-3">
+        <div class="col-12"><label class="form-label">Judul</label><input class="form-control" name="title" required></div>
+        <div class="col-12"><label class="form-label">Ringkasan</label><input class="form-control" name="summary"></div>
+        <div class="col-12"><label class="form-label">Isi</label><textarea class="form-control js-richtext" name="body" rows="4"></textarea></div>
+        <div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="is_published" id="publish_ann" checked><label class="form-check-label" for="publish_ann">Tampilkan di website (Publish)</label></div>
+        <div class="col-12 d-flex gap-2 flex-wrap"><button class="btn btn-outline-dark" name="action" value="preview" type="submit">Preview Dulu</button><button class="btn btn-dark" name="action" value="save" type="submit">Simpan Pengumuman</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-semibold">Daftar Pengumuman</h5>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>Judul</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.title }}</td>
+              <td>{% if item.is_published %}<span class="badge text-bg-success">Publish</span>{% else %}<span class="badge text-bg-secondary">Draft</span>{% endif %}</td>
+              <td>{{ item.published_at.strftime('%d %b %Y') }}</td>
+              <td class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.edit_pengumuman', item_id=item.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.delete_pengumuman', item_id=item.id) }}" onsubmit="return confirm('Hapus pengumuman ini?');"><button class="btn btn-sm btn-outline-danger">Hapus</button></form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-muted">Belum ada pengumuman.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}

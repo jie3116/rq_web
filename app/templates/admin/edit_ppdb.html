@@ -1,0 +1,22 @@
+﻿{% extends "layout.html" %}
+{% block title %}Edit Program PPDB - Admin{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:900px">
+  <h1 class="fw-bold mb-3">Edit Program PPDB</h1>
+  {% include "admin/_menu.html" %}
+  <form method="POST" class="card border-0 shadow-sm">
+    <div class="card-body row g-3">
+      <div class="col-md-6"><label class="form-label">Nama Program</label><input class="form-control" name="name" value="{{ program.name }}"></div>
+      <div class="col-md-3"><label class="form-label">Jenjang</label><input class="form-control" name="levels" value="{{ program.levels }}"></div>
+      <div class="col-md-3"><label class="form-label">Urutan Tab</label><input class="form-control" type="number" name="sort_order" value="{{ program.sort_order }}"></div>
+      <div class="col-12"><label class="form-label">Deskripsi</label><textarea class="form-control js-richtext" name="description" rows="4">{{ program.description }}</textarea></div>
+      <div class="col-12"><label class="form-label">Link Tujuan</label><input class="form-control" name="external_url" value="{{ program.external_url }}"></div>
+      <div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="is_active" id="active_program_edit" {% if program.is_active %}checked{% endif %}><label class="form-check-label" for="active_program_edit">Aktif ditampilkan</label></div>
+      <div class="col-12 d-flex gap-2"><button class="btn btn-dark">Simpan Perubahan</button><a class="btn btn-outline-secondary" href="{{ url_for('admin.content_ppdb') }}">Kembali</a></div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}

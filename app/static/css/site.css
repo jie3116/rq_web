@@ -1,0 +1,134 @@
+.hero { background: linear-gradient(180deg, #fff 0%, #f7f7f7 100%); }
+.site-logo{
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+  padding: 2px;
+}
+
+.stat-card{
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,.06);
+  border:1px solid rgba(0,0,0,.06);
+}
+.stat-num{ font-size:28px; font-weight:800; }
+.stat-label{ color:#6c757d; }
+
+.prose p{ line-height:1.8; }
+.footer-address p{
+  margin-bottom: .25rem;
+}
+
+.teacher-roll{
+  overflow: hidden;
+  background: #f8f9fa;
+  border: 1px solid rgba(0,0,0,.08);
+  padding: 14px 10px;
+}
+
+.teacher-roll-track{
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  animation: teacher-roll-move 40s linear infinite;
+}
+
+.teacher-roll:hover .teacher-roll-track{
+  animation-play-state: paused;
+}
+
+.teacher-card{
+  width: 190px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  padding: 8px;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.teacher-card:hover{
+  transform: scale(1.1);
+  box-shadow: 0 14px 28px rgba(0,0,0,.18);
+  z-index: 2;
+}
+
+.teacher-photo-wrap{
+  height: 210px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teacher-photo{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.teacher-photo-caption{
+  margin-top: 8px;
+  text-align: left;
+  font-weight: 600;
+  font-size: .92rem;
+  color: #212529;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.teacher-photo-subject{
+  margin-top: 2px;
+  text-align: left;
+  font-size: .82rem;
+  color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes teacher-roll-move{
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.gallery-scroll{
+  max-height: 620px;
+  overflow-y: auto;
+}
+
+.gallery-img{
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+@media (max-width: 768px){
+  .teacher-card{
+    width: 150px;
+  }
+
+  .teacher-photo-wrap{
+    height: 170px;
+  }
+}
+
+.video-profile-player{
+  background: #000;
+  border: 1px solid rgba(0, 0, 0, .08);
+  border-radius: 16px;
+}
+
+.video-profile-player iframe{
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

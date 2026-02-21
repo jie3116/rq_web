@@ -1,0 +1,53 @@
+﻿{% extends "layout.html" %}
+{% block title %}Berita - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Berita</h1>
+  {% include "admin/_menu.html" %}
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-semibold">Tambah Berita/Artikel</h5>
+      <form method="POST" enctype="multipart/form-data" class="row g-3">
+        <div class="col-md-8"><label class="form-label">Judul</label><input class="form-control" name="title" required></div>
+        <div class="col-md-4"><label class="form-label">Slug (opsional)</label><input class="form-control" name="slug" placeholder="otomatis jika kosong"></div>
+        <div class="col-12"><label class="form-label">Ringkasan</label><input class="form-control" name="excerpt"></div>
+        <div class="col-12"><label class="form-label">Isi Artikel</label><textarea class="form-control js-richtext" name="body" rows="6"></textarea></div>
+        <div class="col-md-6"><label class="form-label">URL Cover (opsional)</label><input class="form-control" name="cover_url"></div>
+        <div class="col-md-6"><label class="form-label">Upload Cover</label><input class="form-control" type="file" name="cover_photo"></div>
+        <div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="is_published" id="publish_post" checked><label class="form-check-label" for="publish_post">Tampilkan di website (Publish)</label></div>
+        <div class="col-12 d-flex gap-2 flex-wrap"><button class="btn btn-outline-dark" name="action" value="preview" type="submit">Preview Dulu</button><button class="btn btn-dark" name="action" value="save" type="submit">Simpan Artikel</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-semibold">Daftar Berita</h5>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>Judul</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+          <tbody>
+            {% for post in posts %}
+            <tr>
+              <td>{{ post.title }}</td>
+              <td>{% if post.is_published %}<span class="badge text-bg-success">Publish</span>{% else %}<span class="badge text-bg-secondary">Draft</span>{% endif %}</td>
+              <td>{{ post.published_at.strftime('%d %b %Y') }}</td>
+              <td class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.edit_berita', post_id=post.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.delete_berita', post_id=post.id) }}" onsubmit="return confirm('Hapus artikel ini?');"><button class="btn btn-sm btn-outline-danger">Hapus</button></form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-muted">Belum ada artikel.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}

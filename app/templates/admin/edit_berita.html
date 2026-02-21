@@ -1,0 +1,23 @@
+﻿{% extends "layout.html" %}
+{% block title %}Edit Berita - Admin{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:920px">
+  <h1 class="fw-bold mb-3">Edit Berita</h1>
+  {% include "admin/_menu.html" %}
+  <form method="POST" enctype="multipart/form-data" class="card border-0 shadow-sm">
+    <div class="card-body row g-3">
+      <div class="col-md-8"><label class="form-label">Judul</label><input class="form-control" name="title" value="{{ post.title }}"></div>
+      <div class="col-md-4"><label class="form-label">Slug</label><input class="form-control" name="slug" value="{{ post.slug }}"></div>
+      <div class="col-12"><label class="form-label">Ringkasan</label><input class="form-control" name="excerpt" value="{{ post.excerpt }}"></div>
+      <div class="col-12"><label class="form-label">Isi</label><textarea class="form-control js-richtext" name="body" rows="7">{{ post.body }}</textarea></div>
+      <div class="col-md-6"><label class="form-label">URL Cover</label><input class="form-control" name="cover_url" value="{{ post.cover_url }}"></div>
+      <div class="col-md-6"><label class="form-label">Upload Cover Baru</label><input class="form-control" type="file" name="cover_photo"></div>
+      <div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="is_published" id="pub_edit_post" {% if post.is_published %}checked{% endif %}><label class="form-check-label" for="pub_edit_post">Publish</label></div>
+      <div class="col-12 d-flex gap-2 flex-wrap"><button class="btn btn-outline-dark" name="action" value="preview" type="submit">Preview Dulu</button><button class="btn btn-dark" name="action" value="save" type="submit">Simpan Perubahan</button><a class="btn btn-outline-secondary" href="{{ url_for('admin.content_berita') }}">Kembali</a></div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}

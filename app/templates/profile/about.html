@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Profil - {{ SCHOOL_NAME }}{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h1 class="fw-bold mb-3">Profil Sekolah</h1>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-3">
+          <div class="card-body">
+            <h5 class="fw-semibold">Sejarah Singkat</h5>
+            <div class="text-muted mb-0">{{ setting.about_history|safe if setting else "-" }}</div>
+          </div>
+        </div>
+        <div class="card border-0 shadow-sm mb-3">
+          <div class="card-body">
+            <h5 class="fw-semibold">Visi</h5>
+            <div class="text-muted mb-0">{{ setting.about_vision|safe if setting else "-" }}</div>
+          </div>
+        </div>
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-semibold">Misi</h5>
+            <div class="text-muted mb-0">{{ setting.about_mission|safe if setting else "-" }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-semibold mb-3">Galeri</h5>
+            <div class="row g-2">
+              {% for g in galleries %}
+              <div class="col-6">
+                <img src="{{ g.image_url }}" alt="{{ g.title or 'Galeri' }}" class="img-fluid rounded">
+              </div>
+              {% else %}
+              <div class="col-12">
+                <div class="alert alert-secondary mb-0">Belum ada galeri.</div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

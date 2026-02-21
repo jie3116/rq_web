@@ -1,0 +1,26 @@
+﻿<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+<script>
+  (function () {
+    const richTextareas = document.querySelectorAll('textarea.js-richtext');
+    if (!richTextareas.length) return;
+
+    const editors = [];
+    richTextareas.forEach((textarea) => {
+      ClassicEditor.create(textarea).then((editor) => {
+        editors.push({ textarea, editor });
+      }).catch((error) => {
+        console.error('CKEditor init error:', error);
+      });
+    });
+
+    document.querySelectorAll('form').forEach((form) => {
+      form.addEventListener('submit', () => {
+        editors.forEach(({ textarea, editor }) => {
+          if (form.contains(textarea)) {
+            textarea.value = editor.getData();
+          }
+        });
+      });
+    });
+  })();
+</script>

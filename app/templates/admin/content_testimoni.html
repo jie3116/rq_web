@@ -1,0 +1,48 @@
+﻿{% extends "layout.html" %}
+{% block title %}Testimoni - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Testimoni (Tampil di Beranda)</h1>
+  {% include "admin/_menu.html" %}
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-semibold">Tambah Testimoni</h5>
+      <form method="POST" enctype="multipart/form-data" class="row g-3">
+        <div class="col-md-6"><label class="form-label">Nama</label><input class="form-control" name="name" required></div>
+        <div class="col-md-6"><label class="form-label">Peran</label><input class="form-control" name="role" value="Orang Tua"></div>
+        <div class="col-12"><label class="form-label">Isi Testimoni</label><textarea class="form-control" name="quote" rows="3" required></textarea></div>
+        <div class="col-md-6"><label class="form-label">URL Foto (opsional)</label><input class="form-control" name="photo_url"></div>
+        <div class="col-md-6"><label class="form-label">Upload Foto</label><input class="form-control" type="file" name="testimonial_photo"></div>
+        <div class="col-12"><button class="btn btn-dark">Simpan Testimoni</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-semibold">Daftar Testimoni</h5>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>Nama</th><th>Peran</th><th>Testimoni</th><th>Aksi</th></tr></thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.name }}</td>
+              <td>{{ item.role }}</td>
+              <td>{{ item.quote }}</td>
+              <td class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.edit_testimoni', item_id=item.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.delete_testimoni', item_id=item.id) }}" onsubmit="return confirm('Hapus testimoni ini?');"><button class="btn btn-sm btn-outline-danger">Hapus</button></form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-muted">Belum ada testimoni.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+﻿{% extends "layout.html" %}
+{% block title %}Edit Testimoni - Admin{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:900px">
+  <h1 class="fw-bold mb-3">Edit Testimoni</h1>
+  {% include "admin/_menu.html" %}
+  <form method="POST" enctype="multipart/form-data" class="card border-0 shadow-sm">
+    <div class="card-body row g-3">
+      <div class="col-md-6"><label class="form-label">Nama</label><input class="form-control" name="name" value="{{ item.name }}"></div>
+      <div class="col-md-6"><label class="form-label">Peran</label><input class="form-control" name="role" value="{{ item.role }}"></div>
+      <div class="col-12"><label class="form-label">Isi Testimoni</label><textarea class="form-control" name="quote" rows="4">{{ item.quote }}</textarea></div>
+      <div class="col-12"><label class="form-label">URL Foto</label><input class="form-control" name="photo_url" value="{{ item.photo_url }}"></div>
+      <div class="col-12"><label class="form-label">Upload Foto Baru</label><input class="form-control" type="file" name="testimonial_photo"></div>
+      <div class="col-12 d-flex gap-2"><button class="btn btn-dark">Simpan Perubahan</button><a class="btn btn-outline-secondary" href="{{ url_for('admin.content_testimoni') }}">Kembali</a></div>
+    </div>
+  </form>
+</div>
+{% endblock %}

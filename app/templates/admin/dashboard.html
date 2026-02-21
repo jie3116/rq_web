@@ -1,0 +1,84 @@
+﻿{% extends "layout.html" %}
+{% block title %}Dashboard Admin - {{ SCHOOL_NAME }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h1 class="fw-bold mb-0">Dashboard Admin</h1>
+    <form method="POST" action="{{ url_for('admin.logout') }}">
+      <button class="btn btn-outline-dark" type="submit">Logout</button>
+    </form>
+  </div>
+
+  {% include "admin/_menu.html" %}
+
+  <div class="row g-3">
+    <div class="col-md-2"><div class="stat-card"><div class="stat-num">{{ data.hero }}</div><div class="stat-label">Hero</div></div></div>
+    <div class="col-md-2"><div class="stat-card"><div class="stat-num">{{ data.announcements }}</div><div class="stat-label">Pengumuman</div></div></div>
+    <div class="col-md-2"><div class="stat-card"><div class="stat-num">{{ data.posts }}</div><div class="stat-label">Berita</div></div></div>
+    <div class="col-md-2"><div class="stat-card"><div class="stat-num">{{ data.gallery }}</div><div class="stat-label">Media</div></div></div>
+    <div class="col-md-2"><div class="stat-card"><div class="stat-num">{{ data.testimonials }}</div><div class="stat-label">Testimoni</div></div></div>
+    <div class="col-md-2"><div class="stat-card"><div class="stat-num">{{ data.ppdb_programs }}</div><div class="stat-label">Program PPDB</div></div></div>
+  </div>
+
+  <div class="alert alert-info mt-4">
+    <strong>Panduan:</strong>
+    <ul class="mb-0 mt-2">
+      <li>Foto kategori <strong>Hero</strong> tampil di carousel beranda.</li>
+      <li>Foto kategori <strong>Guru</strong> tampil di carousel guru beranda.</li>
+      <li>Foto kategori <strong>Kegiatan</strong> dan <strong>Fasilitas</strong> tampil di section Galeri beranda.</li>
+      <li>Gunakan tombol <strong>Preview Dulu</strong> di Berita/Pengumuman sebelum publish.</li>
+    </ul>
+  </div>
+
+  <div class="card border-0 shadow-sm mt-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h5 class="fw-semibold mb-0">Contact Info Website</h5>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.content_kontak') }}">Edit Lengkap</a>
+      </div>
+      <form method="POST" class="row g-3">
+        <input type="hidden" name="form_name" value="contact_info">
+        <div class="col-12">
+          <label class="form-label">Alamat</label>
+          <textarea class="form-control" name="address" rows="2">{{ info.address if info else '' }}</textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input class="form-control" name="email" value="{{ info.email if info else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Telepon</label>
+          <input class="form-control" name="phone" value="{{ info.phone if info else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">WhatsApp</label>
+          <input class="form-control" name="whatsapp" value="{{ info.whatsapp if info else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Google Maps Embed URL</label>
+          <input class="form-control" name="map_embed_url" value="{{ info.map_embed_url if info else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Instagram URL</label>
+          <input class="form-control" name="instagram_url" value="{{ info.instagram_url if info else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Facebook URL</label>
+          <input class="form-control" name="facebook_url" value="{{ info.facebook_url if info else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">TikTok URL</label>
+          <input class="form-control" name="tiktok_url" value="{{ info.tiktok_url if info else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">YouTube URL</label>
+          <input class="form-control" name="youtube_url" value="{{ info.youtube_url if info else '' }}">
+        </div>
+        <div class="col-12">
+          <button class="btn btn-dark">Simpan Contact Info</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

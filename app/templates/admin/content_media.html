@@ -1,0 +1,59 @@
+﻿{% extends "layout.html" %}
+{% block title %}Media - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Media (Foto)</h1>
+  {% include "admin/_menu.html" %}
+
+  <div class="alert alert-info">
+    <strong>Penempatan foto di website:</strong>
+    <ul class="mb-0 mt-2">
+      <li><strong>Hero</strong>: carousel hero halaman Beranda.</li>
+      <li><strong>Guru</strong>: carousel foto guru di halaman Beranda.</li>
+      <li><strong>Kegiatan</strong>: tampil di section Galeri (dengan scroll atas-bawah) di Beranda.</li>
+      <li><strong>Fasilitas</strong>: tampil di section Galeri (dengan scroll atas-bawah) di Beranda.</li>
+      <li><strong>Profil</strong>: galeri di halaman Profil.</li>
+    </ul>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-semibold">Upload Foto</h5>
+      <form method="POST" enctype="multipart/form-data" class="row g-3">
+        <div class="col-md-4"><label class="form-label">Judul Foto</label><input class="form-control" name="title"></div>
+        <div class="col-md-4"><label class="form-label">Kategori Penempatan</label><select class="form-select" name="category"><option value="Hero">Hero</option><option value="Guru">Guru</option><option value="Kegiatan">Kegiatan</option><option value="Fasilitas">Fasilitas</option><option value="Profil">Profil</option></select></div>
+        <div class="col-md-4"><label class="form-label">URL Gambar (opsional)</label><input class="form-control" name="image_url"></div>
+        <div class="col-md-6"><label class="form-label">Subject Guru (khusus kategori Guru)</label><input class="form-control" name="teacher_subject" placeholder="Contoh: Matematika"></div>
+        <div class="col-12"><small class="text-muted">Jika kategori <strong>Guru</strong>, isi nama di Judul Foto dan isi mapel di Subject Guru.</small></div>
+        <div class="col-12"><label class="form-label">Upload Gambar</label><input class="form-control" type="file" name="gallery_photo"></div>
+        <div class="col-12"><button class="btn btn-dark">Simpan Foto</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-semibold">Daftar Media</h5>
+      <div class="row g-3 mt-1">
+        {% for item in items %}
+        <div class="col-sm-6 col-lg-3">
+          <div class="card h-100">
+            <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.title or 'Media' }}" style="height:150px;object-fit:cover;">
+            <div class="card-body">
+              <div class="fw-semibold">{{ item.title or '-' }}</div>
+              <div class="small text-muted">Kategori: {{ item.category }}</div>
+              <div class="d-flex gap-2 mt-2">
+                <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.edit_media', item_id=item.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.delete_media', item_id=item.id) }}" onsubmit="return confirm('Hapus media ini?');"><button class="btn btn-sm btn-outline-danger">Hapus</button></form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-12"><div class="alert alert-secondary">Belum ada media.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

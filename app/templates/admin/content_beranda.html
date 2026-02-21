@@ -1,0 +1,63 @@
+﻿{% extends "layout.html" %}
+{% block title %}Beranda - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Beranda</h1>
+  {% include "admin/_menu.html" %}
+
+  <div class="alert alert-info">
+    <strong>Carousel Hero</strong> tidak diupload dari halaman ini.
+    Untuk upload foto hero, buka menu <strong>Media (Foto)</strong> lalu pilih kategori <strong>Hero</strong>.
+  </div>
+
+  <form method="POST" class="row g-4">
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h5 class="fw-semibold">Statistik Beranda</h5>
+          <label class="form-label mt-2">Jumlah Siswa</label>
+          <input class="form-control" type="number" name="students_count" value="{{ stats.students_count if stats else 0 }}">
+          <label class="form-label mt-3">Jumlah Guru</label>
+          <input class="form-control" type="number" name="teachers_count" value="{{ stats.teachers_count if stats else 0 }}">
+          <label class="form-label mt-3">Jumlah Alumni</label>
+          <input class="form-control" type="number" name="alumni_count" value="{{ stats.alumni_count if stats else 0 }}">
+          <label class="form-label mt-3">Akreditasi</label>
+          <input class="form-control" name="accreditation" value="{{ stats.accreditation if stats else '-' }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h5 class="fw-semibold">Video Profil (Beranda)</h5>
+          <label class="form-label mt-2">Judul Video</label>
+          <input class="form-control" name="video_title" value="{{ video.title if video else '' }}">
+          <label class="form-label mt-3">YouTube Embed URL</label>
+          <input class="form-control" name="youtube_embed_url" value="{{ video.youtube_embed_url if video else '' }}">
+          <small class="text-muted d-block mt-2">Isi link YouTube untuk konten video di halaman utama. Boleh tempel link biasa (`youtube.com/watch...` / `youtu.be/...`) atau kode iframe.</small>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mt-3">
+        <div class="card-body">
+          <h6 class="fw-semibold">Slide Hero Saat Ini</h6>
+          <div class="row g-2">
+            {% for h in hero_items %}
+            <div class="col-4">
+              <img src="{{ h.image_url }}" class="img-fluid rounded" alt="{{ h.title or 'Hero' }}">
+            </div>
+            {% else %}
+            <div class="col-12"><small class="text-muted">Belum ada slide hero.</small></div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <button class="btn btn-dark">Simpan Perubahan Beranda</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

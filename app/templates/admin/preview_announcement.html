@@ -1,0 +1,14 @@
+﻿{% extends "layout.html" %}
+{% block title %}Preview Pengumuman - Admin{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:920px">
+  <h1 class="fw-bold">Preview Pengumuman</h1>
+  <div class="text-muted mb-3">Ini preview sebelum disimpan ke website.</div>
+  <h2>{{ item.title }}</h2>
+  <p class="text-muted">{{ item.summary }}</p>
+  <article>{{ item.body|safe }}</article>
+  <div class="mt-4">
+    <a class="btn btn-dark" href="{{ url_for('admin.content_pengumuman') }}">Kembali ke Form Pengumuman</a>
+  </div>
+</div>
+{% endblock %}

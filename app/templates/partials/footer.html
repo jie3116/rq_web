@@ -1,0 +1,44 @@
+﻿<footer class="bg-dark text-light mt-5">
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-md-5">
+        <h5 class="fw-semibold">{{ SCHOOL_NAME }}</h5>
+        <div class="mb-1 footer-address">{{ ((CONTACT_INFO.address if CONTACT_INFO and CONTACT_INFO.address else SCHOOL_ADDRESS) or '-')|safe }}</div>
+        <p class="mb-1">Email : {{ (CONTACT_INFO.email if CONTACT_INFO and CONTACT_INFO.email else SCHOOL_EMAIL) or '-' }}</p>
+        <p class="mb-1">Telp : {{ (CONTACT_INFO.phone if CONTACT_INFO and CONTACT_INFO.phone else SCHOOL_PHONE) or '-' }}</p>
+        <p class="mb-0">WA : {{ (CONTACT_INFO.whatsapp if CONTACT_INFO and CONTACT_INFO.whatsapp else SCHOOL_WHATSAPP) or '-' }}</p>
+      </div>
+      <div class="col-md-4">
+        <h6 class="fw-semibold">Tautan</h6>
+        <ul class="list-unstyled mb-0">
+          <li><a class="link-light text-decoration-none" href="{{ url_for('profile.about') }}">Profil Sekolah</a></li>
+          <li><a class="link-light text-decoration-none" href="{{ url_for('ppdb.index') }}">PPDB</a></li>
+          <li><a class="link-light text-decoration-none" href="{{ url_for('blog.index') }}">Berita</a></li>
+          <li><a class="link-light text-decoration-none" href="{{ SCHOOL_SYSTEM_URL }}" target="_blank" rel="noopener">Login Area</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h6 class="fw-semibold">Hak Cipta</h6>
+        <p class="mb-0">&copy; {{ SCHOOL_NAME }}</p>
+        <small class="text-secondary">Konten dan media milik sekolah.</small>
+        <div class="d-flex gap-3 mt-3 fs-5">
+          {% if CONTACT_INFO and CONTACT_INFO.instagram_url %}
+          <a class="link-light" href="{{ CONTACT_INFO.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          {% endif %}
+          {% set email_addr = CONTACT_INFO.email if CONTACT_INFO and CONTACT_INFO.email else SCHOOL_EMAIL %}
+          {% if email_addr %}
+          <a class="link-light" href="mailto:{{ email_addr }}" aria-label="Email"><i class="bi bi-envelope-fill"></i></a>
+          {% endif %}
+          {% set phone_num = CONTACT_INFO.phone if CONTACT_INFO and CONTACT_INFO.phone else SCHOOL_PHONE %}
+          {% if phone_num %}
+          <a class="link-light" href="tel:{{ phone_num|replace(' ','') }}" aria-label="Telepon"><i class="bi bi-telephone-fill"></i></a>
+          {% endif %}
+          <a class="link-light" href="{{ url_for('main.home') }}" aria-label="Website"><i class="bi bi-globe2"></i></a>
+          {% if CONTACT_INFO and CONTACT_INFO.youtube_url %}
+          <a class="link-light" href="{{ CONTACT_INFO.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

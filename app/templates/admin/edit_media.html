@@ -1,0 +1,19 @@
+﻿{% extends "layout.html" %}
+{% block title %}Edit Media - Admin{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:900px">
+  <h1 class="fw-bold mb-3">Edit Media Foto</h1>
+  {% include "admin/_menu.html" %}
+  <form method="POST" enctype="multipart/form-data" class="card border-0 shadow-sm">
+    <div class="card-body row g-3">
+      <div class="col-md-6"><label class="form-label">Judul</label><input class="form-control" name="title" value="{{ teacher_name if item.category == 'Guru' else item.title }}"></div>
+      <div class="col-md-6"><label class="form-label">Kategori</label><select class="form-select" name="category"><option value="Hero" {% if item.category=='Hero' %}selected{% endif %}>Hero</option><option value="Guru" {% if item.category=='Guru' %}selected{% endif %}>Guru</option><option value="Kegiatan" {% if item.category=='Kegiatan' %}selected{% endif %}>Kegiatan</option><option value="Fasilitas" {% if item.category=='Fasilitas' %}selected{% endif %}>Fasilitas</option><option value="Profil" {% if item.category=='Profil' %}selected{% endif %}>Profil</option></select></div>
+      <div class="col-md-6"><label class="form-label">Subject Guru (khusus kategori Guru)</label><input class="form-control" name="teacher_subject" value="{{ teacher_subject if item.category == 'Guru' else '' }}"></div>
+      <div class="col-12"><small class="text-muted">Jika kategori <strong>Guru</strong>, isi mapel pada Subject Guru agar tampil di beranda.</small></div>
+      <div class="col-12"><label class="form-label">URL Gambar</label><input class="form-control" name="image_url" value="{{ item.image_url }}"></div>
+      <div class="col-12"><label class="form-label">Upload Gambar Baru</label><input class="form-control" type="file" name="gallery_photo"></div>
+      <div class="col-12 d-flex gap-2"><button class="btn btn-dark">Simpan Perubahan</button><a class="btn btn-outline-secondary" href="{{ url_for('admin.content_media') }}">Kembali</a></div>
+    </div>
+  </form>
+</div>
+{% endblock %}

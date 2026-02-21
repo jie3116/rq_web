@@ -1,0 +1,45 @@
+﻿{% extends "layout.html" %}
+{% block title %}Kontak - {{ SCHOOL_NAME }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kontak</h1>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h5 class="fw-semibold">Alamat</h5>
+          <div class="text-muted">{{ (info.address|safe if info and info.address else SCHOOL_ADDRESS) or '-' }}</div>
+          <hr>
+          <p class="mb-1">Email: <strong>{{ (info.email if info and info.email else SCHOOL_EMAIL) or '-' }}</strong></p>
+          <p class="mb-1">Telp: <strong>{{ (info.phone if info and info.phone else SCHOOL_PHONE) or '-' }}</strong></p>
+          <p class="mb-3">WA: <strong>{{ (info.whatsapp if info and info.whatsapp else SCHOOL_WHATSAPP) or '-' }}</strong></p>
+
+          {% set wa_number = (info.whatsapp if info and info.whatsapp else SCHOOL_WHATSAPP)|replace('+','')|replace(' ','') %}
+          {% if wa_number %}
+            <a class="btn btn-success" href="https://wa.me/{{ wa_number }}" target="_blank" rel="noopener">Chat WhatsApp</a>
+          {% endif %}
+
+          <div class="mt-3 d-flex gap-2 flex-wrap">
+            {% if info and info.instagram_url %}<a class="btn btn-sm btn-outline-dark" href="{{ info.instagram_url }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+            {% if info and info.facebook_url %}<a class="btn btn-sm btn-outline-dark" href="{{ info.facebook_url }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+            {% if info and info.tiktok_url %}<a class="btn btn-sm btn-outline-dark" href="{{ info.tiktok_url }}" target="_blank" rel="noopener">TikTok</a>{% endif %}
+            {% if info and info.youtube_url %}<a class="btn btn-sm btn-outline-dark" href="{{ info.youtube_url }}" target="_blank" rel="noopener">YouTube</a>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm bg-light">
+        {% set map_url = info.map_embed_url if info and info.map_embed_url else SCHOOL_MAP_EMBED_URL %}
+        {% if map_url %}
+          <iframe src="{{ map_url }}" title="Lokasi sekolah" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        {% else %}
+          <div class="d-flex align-items-center justify-content-center">Map embed belum di-set</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+﻿{% extends "layout.html" %}
+{% block title %}PPDB - {{ SCHOOL_NAME }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold">PPDB</h1>
+  <p class="text-muted">Informasi program pendaftaran siswa baru. Klik tombol daftar untuk lanjut ke halaman pendaftaran.</p>
+
+  {% if programs %}
+  <ul class="nav nav-tabs" id="ppdbTabs" role="tablist">
+    {% for p in programs %}
+    <li class="nav-item" role="presentation">
+      <button class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ p.id }}" data-bs-toggle="tab" data-bs-target="#pane-{{ p.id }}" type="button" role="tab" aria-controls="pane-{{ p.id }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ p.name }}</button>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="tab-content border border-top-0 rounded-bottom p-4" id="ppdbTabsContent">
+    {% for p in programs %}
+    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="pane-{{ p.id }}" role="tabpanel" aria-labelledby="tab-{{ p.id }}">
+      <h4 class="fw-semibold">{{ p.name }}</h4>
+      <p class="mb-1"><strong>Jenjang:</strong> {{ p.levels or '-' }}</p>
+      <div class="text-muted">{{ p.description|safe if p.description else '-' }}</div>
+      <a class="btn btn-warning" href="{{ p.external_url or PPDB_SYSTEM_URL }}" target="_blank" rel="noopener">Daftar di Portal PPDB</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-secondary">Program PPDB belum tersedia.</div>
+  <a class="btn btn-warning" href="{{ PPDB_SYSTEM_URL }}" target="_blank" rel="noopener">Buka Portal PPDB</a>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,253 @@
+﻿{% extends "layout.html" %}
+{% block title %}Beranda - {{ SCHOOL_NAME }}{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="container py-5">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <h1 class="display-5 fw-bold">Dari Al-Qur’an Menuju Peradaban</h1>
+        <p class="lead text-muted">Website resmi {{ SCHOOL_NAME }} - informasi akademik, kegiatan, PPDB, pengumuman, dan layanan.</p>
+        <div class="d-flex gap-2 flex-wrap">
+          <a class="btn btn-warning btn-lg" href="{{ PPDB_SYSTEM_URL }}" target="_blank" rel="noopener">Daftar PPDB</a>
+          <a class="btn btn-outline-dark btn-lg" href="{{ url_for('profile.about') }}">Lihat Profil</a>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        {% if hero_slides %}
+        <div id="heroCarousel" class="carousel slide rounded-4 overflow-hidden shadow-sm" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+            {% for s in hero_slides %}
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active" aria-current="true"{% endif %} aria-label="Slide {{ loop.index }}"></button>
+            {% endfor %}
+          </div>
+          <div class="carousel-inner" style="height:320px;">
+            {% for s in hero_slides %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+              <img src="{{ s.image_url }}" class="d-block w-100" alt="{{ s.title or 'Hero Slide' }}" style="height:320px;object-fit:cover;">
+            </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+        {% else %}
+        <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm bg-light">
+          <img src="{{ url_for('static', filename='img/hero-placeholder.jpg') }}" alt="Hero" style="object-fit:cover; width:100%; height:100%;">
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-4">
+        <div class="rounded-4 overflow-hidden shadow-sm bg-white">
+          <img src="{{ setting.headmaster_photo_url if setting and setting.headmaster_photo_url else url_for('static', filename='img/headmaster-placeholder.jpg') }}"
+               alt="Kepala Sekolah" style="width:100%; height:360px; object-fit:cover;">
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <h2 class="fw-bold">Sambutan Mudir Pesantren</h2>
+        <p class="text-muted mb-2"><strong>{{ setting.headmaster_name if setting else '-' }}</strong></p>
+        <div class="mb-0">{{ setting.headmaster_quote|safe if setting else '-' }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+      <div>
+        <h3 class="fw-bold mb-1">Asatidz/ Asatdizah</h3>
+      </div>
+    </div>
+
+    {% if teacher_cards %}
+    <div class="teacher-roll shadow-sm rounded-4">
+      <div class="teacher-roll-track">
+        {% for t in teacher_cards %}
+        <div class="teacher-card">
+          <div class="teacher-photo-wrap">
+            <img src="{{ t.image_url }}" class="teacher-photo" alt="{{ t.name or 'Foto Guru' }}">
+          </div>
+          <div class="teacher-photo-caption">{{ t.name or 'Guru' }}</div>
+          <div class="teacher-photo-subject">{{ t.subject }}</div>
+        </div>
+        {% endfor %}
+        {% for t in teacher_cards %}
+        <div class="teacher-card" aria-hidden="true">
+          <div class="teacher-photo-wrap">
+            <img src="{{ t.image_url }}" class="teacher-photo" alt="{{ t.name or 'Foto Guru' }}">
+          </div>
+          <div class="teacher-photo-caption">{{ t.name or 'Guru' }}</div>
+          <div class="teacher-photo-subject">{{ t.subject }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="alert alert-secondary">Belum ada foto guru. Tambahkan media kategori <strong>Guru</strong> dari dashboard admin.</div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+      <div>
+        <h3 class="fw-bold mb-1">Info Terkini dan Pengumuman</h3>
+        <p class="text-muted mb-0">3 update terbaru dari sekolah</p>
+      </div>
+      <a href="{{ url_for('blog.index') }}" class="text-decoration-none">Lihat berita -&gt;</a>
+    </div>
+
+    <div class="row g-3">
+      {% for a in announcements %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body">
+            <div class="small text-muted mb-1">{{ a.published_at.strftime("%d %b %Y") }}</div>
+            <h5 class="card-title">{{ a.title }}</h5>
+            <p class="card-text text-muted">{{ a.summary }}</p>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-12"><div class="alert alert-secondary">Belum ada pengumuman.</div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="bg-light py-5">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Statistik Pesantren</h3>
+    <div class="row g-3">
+      <div class="col-md-3"><div class="stat-card"><div class="stat-num">{{ stats.students_count if stats else 0 }}</div><div class="stat-label">Santri</div></div></div>
+      <div class="col-md-3"><div class="stat-card"><div class="stat-num">{{ stats.teachers_count if stats else 0 }}</div><div class="stat-label">Guru</div></div></div>
+      <div class="col-md-3"><div class="stat-card"><div class="stat-num">{{ stats.alumni_count if stats else 0 }}</div><div class="stat-label">Alumni</div></div></div>
+      <div class="col-md-3"><div class="stat-card"><div class="stat-num">{{ stats.accreditation if stats else '-' }}</div><div class="stat-label">Akreditasi</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-light py-5">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Galeri</h3>
+
+    <div class="gallery-scroll shadow-sm rounded-4 p-3 bg-white">
+      <div class="mb-4">
+        <h5 class="fw-semibold">Kegiatan</h5>
+        <div class="row g-2">
+          {% for g in gallery_kegiatan %}
+          <div class="col-6 col-md-4">
+            <div class="rounded-3 overflow-hidden bg-light">
+              <img src="{{ g.image_url }}" alt="{{ g.title or 'Kegiatan' }}" class="gallery-img">
+            </div>
+          </div>
+          {% else %}
+          <div class="col-12"><div class="alert alert-secondary">Belum ada foto kegiatan.</div></div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <h5 class="fw-semibold">Fasilitas</h5>
+        <div class="row g-2">
+          {% for g in gallery_fasilitas %}
+          <div class="col-6 col-md-4">
+            <div class="rounded-3 overflow-hidden bg-light">
+              <img src="{{ g.image_url }}" alt="{{ g.title or 'Fasilitas' }}" class="gallery-img">
+            </div>
+          </div>
+          {% else %}
+          <div class="col-12"><div class="alert alert-secondary">Belum ada foto fasilitas.</div></div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Testimoni</h3>
+    <div class="row g-3">
+      {% for t in testimonials %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body">
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <img src="{{ t.photo_url or url_for('static', filename='img/user-placeholder.png') }}" alt="Foto {{ t.name }}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div>
+                <div class="fw-semibold">{{ t.name }}</div>
+                <div class="small text-muted">{{ t.role }}</div>
+              </div>
+            </div>
+            <p class="mb-0">"{{ t.quote }}"</p>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-12"><div class="alert alert-secondary">Belum ada testimoni.</div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="bg-light py-5">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Video Profil</h3>
+    <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm video-profile-player">
+      {% if video_embed_url %}
+      <iframe
+        src="{{ video_embed_url }}"
+        title="Video Profil"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+      {% else %}
+      <div class="d-flex align-items-center justify-content-center text-muted">Video profil belum tersedia.</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Berita Terbaru</h3>
+    <div class="row g-3">
+      {% for p in latest_posts %}
+      <div class="col-md-4">
+        <a class="text-decoration-none text-dark" href="{{ url_for('blog.detail', slug=p.slug) }}">
+          <div class="card h-100 shadow-sm border-0">
+            <img src="{{ p.cover_url or url_for('static', filename='img/post-placeholder.jpg') }}" class="card-img-top" alt="{{ p.title }}" style="height:180px;object-fit:cover;">
+            <div class="card-body">
+              <div class="small text-muted">{{ p.published_at.strftime('%d %b %Y') }}</div>
+              <h5 class="card-title mt-1">{{ p.title }}</h5>
+              <p class="text-muted mb-0">{{ p.excerpt }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% else %}
+      <div class="col-12"><div class="alert alert-secondary">Belum ada berita.</div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

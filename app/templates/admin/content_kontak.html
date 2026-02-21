@@ -1,0 +1,56 @@
+﻿{% extends "layout.html" %}
+{% block title %}Konten Kontak - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Halaman Kontak</h1>
+  {% include "admin/_menu.html" %}
+
+  <form method="POST" class="card border-0 shadow-sm">
+    <div class="card-body row g-3">
+      <div class="col-12">
+        <label class="form-label">Alamat</label>
+        <textarea class="form-control js-richtext" name="address" rows="3">{{ info.address if info else '' }}</textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input class="form-control" name="email" value="{{ info.email if info else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Telepon</label>
+        <input class="form-control" name="phone" value="{{ info.phone if info else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">WhatsApp</label>
+        <input class="form-control" name="whatsapp" value="{{ info.whatsapp if info else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Google Maps Embed URL</label>
+        <input class="form-control" name="map_embed_url" value="{{ info.map_embed_url if info else '' }}">
+        <small class="text-muted">Boleh tempel URL embed maps atau langsung kode iframe dari Google Maps.</small>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Instagram URL</label>
+        <input class="form-control" name="instagram_url" value="{{ info.instagram_url if info else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Facebook URL</label>
+        <input class="form-control" name="facebook_url" value="{{ info.facebook_url if info else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">TikTok URL</label>
+        <input class="form-control" name="tiktok_url" value="{{ info.tiktok_url if info else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">YouTube URL</label>
+        <input class="form-control" name="youtube_url" value="{{ info.youtube_url if info else '' }}">
+      </div>
+      <div class="col-12">
+        <button class="btn btn-dark">Simpan Konten Kontak</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}

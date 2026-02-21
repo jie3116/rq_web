@@ -1,0 +1,20 @@
+﻿{% extends "layout.html" %}
+{% block title %}Edit Pengumuman - Admin{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:920px">
+  <h1 class="fw-bold mb-3">Edit Pengumuman</h1>
+  {% include "admin/_menu.html" %}
+  <form method="POST" class="card border-0 shadow-sm">
+    <div class="card-body row g-3">
+      <div class="col-12"><label class="form-label">Judul</label><input class="form-control" name="title" value="{{ item.title }}"></div>
+      <div class="col-12"><label class="form-label">Ringkasan</label><input class="form-control" name="summary" value="{{ item.summary }}"></div>
+      <div class="col-12"><label class="form-label">Isi</label><textarea class="form-control js-richtext" name="body" rows="6">{{ item.body }}</textarea></div>
+      <div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="is_published" id="pub_edit_ann" {% if item.is_published %}checked{% endif %}><label class="form-check-label" for="pub_edit_ann">Publish</label></div>
+      <div class="col-12 d-flex gap-2 flex-wrap"><button class="btn btn-outline-dark" name="action" value="preview" type="submit">Preview Dulu</button><button class="btn btn-dark" name="action" value="save" type="submit">Simpan Perubahan</button><a class="btn btn-outline-secondary" href="{{ url_for('admin.content_pengumuman') }}">Kembali</a></div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}

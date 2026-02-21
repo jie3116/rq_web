@@ -1,0 +1,14 @@
+.git
+.idea
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+docker-compose.override.yml
+.env
+.env.*
+!.env.example
+!.env.local.example
+!.env.production.example

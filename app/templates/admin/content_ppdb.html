@@ -1,0 +1,73 @@
+﻿{% extends "layout.html" %}
+{% block title %}Konten PPDB - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3">Kelola Halaman PPDB</h1>
+  {% include "admin/_menu.html" %}
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-semibold">Tambah Program PPDB</h5>
+      <form method="POST" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nama Program</label>
+          <input class="form-control" name="name" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Jenjang</label>
+          <input class="form-control" name="levels" placeholder="SD/SMP/SMA">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Urutan Tab</label>
+          <input class="form-control" type="number" name="sort_order" value="0">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Deskripsi Program</label>
+          <textarea class="form-control js-richtext" name="description" rows="3"></textarea>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Link Tujuan</label>
+          <input class="form-control" name="external_url" value="{{ PPDB_SYSTEM_URL }}">
+        </div>
+        <div class="col-md-4 form-check ms-2 mt-4">
+          <input class="form-check-input" type="checkbox" name="is_active" id="active_program" checked>
+          <label class="form-check-label" for="active_program">Aktif ditampilkan</label>
+        </div>
+        <div class="col-12"><button class="btn btn-dark">Simpan Program</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-semibold">Daftar Program PPDB</h5>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>Nama</th><th>Jenjang</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody>
+            {% for p in programs %}
+            <tr>
+              <td>{{ p.name }}</td>
+              <td>{{ p.levels or '-' }}</td>
+              <td>{{ p.sort_order }}</td>
+              <td>{% if p.is_active %}<span class="badge text-bg-success">Aktif</span>{% else %}<span class="badge text-bg-secondary">Nonaktif</span>{% endif %}</td>
+              <td class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.edit_ppdb', program_id=p.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.delete_ppdb', program_id=p.id) }}" onsubmit="return confirm('Hapus program ini?');">
+                  <button class="btn btn-sm btn-outline-danger">Hapus</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-muted">Belum ada program PPDB.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  {% include "admin/_editor_assets.html" %}
+{% endblock %}
