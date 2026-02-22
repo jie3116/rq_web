@@ -2,7 +2,9 @@
 import re
 import uuid
 from datetime import datetime
+from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlparse
+from urllib.request import Request, urlopen
 
 import bleach
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
@@ -102,6 +104,28 @@ def _normalize_youtube_embed_url(value):
 
 def _normalize_map_embed_url(value):
     raw = _sanitize_text(_extract_iframe_src(value))
+    if not raw:
+        return ""
+
+    parsed = urlparse(raw)
+    host = (parsed.netloc or "").lower()
+    path = parsed.path or ""
+
+    if "google.com" in host and "/maps/embed" in path:
+        return raw
+
+    # Convert common Google Maps links to embeddable format.
+    if "google.com" in host or "goo.gl" in host:
+        query = parse_qs(parsed.query)
+        q_value = query.get("q", [""])[0] or query.get("query", [""])[0]
+        if q_value:
+            return f"https://www.google.com/maps?q={q_value}&output=embed"
+
+        if "/maps/place/" in path:
+            place = path.split("/maps/place/", 1)[1].split("/", 1)[0]
+            if place:
+                return f"https://www.google.com/maps?q={place}&output=embed"
+
     return raw
 
 
@@ -129,7 +153,7 @@ def _normalize_image_url(value):
         if not file_id:
             file_id = parse_qs(parsed.query).get("id", [""])[0]
         if file_id:
-            return f"https://drive.google.com/uc?export=view&id={file_id}"
+            return f"https://drive.google.com/thumbnail?id={file_id}&sz=w2000"
 
     if scheme in {"http", "https"}:
         return raw
@@ -221,9 +245,93 @@ def _save_image_upload(upload, subdir):
     suffix = uuid.uuid4().hex[:6]
     filename = f"{ts}-{suffix}-{stem}{ext.lower()}"
     full_path = os.path.join(target_folder, filename)
-    upload.save(full_path)
+    try:
+        upload.save(full_path)
+    except OSError as e:
+        raise ValueError(
+            "Server tidak bisa menyimpan file upload. Periksa permission folder media di deployment."
+        ) from e
 
     return url_for("static", filename=f"{rel_base}/{subdir}/{filename}")
+
+
+def _guess_ext_from_content_type(content_type):
+    normalized = (content_type or "").lower().split(";", 1)[0].strip()
+    mapping = {
+        "image/jpeg": ".jpg",
+        "image/png": ".png",
+        "image/webp": ".webp",
+        "image/gif": ".gif",
+        "image/svg+xml": ".svg",
+        "image/avif": ".avif",
+    }
+    return mapping.get(normalized, "")
+
+
+def _save_image_from_url(image_url, subdir):
+    parsed = urlparse(image_url)
+    if parsed.scheme not in {"http", "https"}:
+        return image_url
+
+    max_size = current_app.config.get("MAX_CONTENT_LENGTH", 16 * 1024 * 1024)
+    base_folder = current_app.config["MEDIA_UPLOAD_FOLDER"]
+    rel_base = current_app.config["MEDIA_UPLOAD_DIR"]
+    target_folder = os.path.join(base_folder, subdir)
+    os.makedirs(target_folder, exist_ok=True)
+
+    request_obj = Request(
+        image_url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (compatible; RQDFMediaBot/1.0)",
+            "Accept": "image/*,*/*;q=0.8",
+        },
+    )
+
+    try:
+        with urlopen(request_obj, timeout=20) as response:
+            content_type = response.headers.get("Content-Type") or ""
+            if not content_type.lower().startswith("image/"):
+                raise ValueError("URL tidak mengarah ke file gambar langsung atau file tidak public.")
+
+            data = response.read(max_size + 1)
+            if len(data) > max_size:
+                raise ValueError("Ukuran gambar melebihi batas upload.")
+
+            ext = _guess_ext_from_content_type(content_type)
+            if not ext:
+                path_ext = os.path.splitext((parsed.path or "").split("/")[-1])[1].lower()
+                if path_ext in {".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".avif"}:
+                    ext = path_ext
+            if not ext:
+                raise ValueError("Format gambar dari URL tidak didukung.")
+
+            stem = secure_filename(os.path.splitext(os.path.basename(parsed.path or "image"))[0]) or "image"
+            stem = stem[:80]
+            ts = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+            suffix = uuid.uuid4().hex[:6]
+            filename = f"{ts}-{suffix}-{stem}{ext}"
+            full_path = os.path.join(target_folder, filename)
+            try:
+                with open(full_path, "wb") as file_obj:
+                    file_obj.write(data)
+            except OSError as e:
+                raise ValueError(
+                    "Server tidak bisa menyimpan file dari URL. Periksa permission folder media di deployment."
+                ) from e
+            return url_for("static", filename=f"{rel_base}/{subdir}/{filename}")
+    except HTTPError as e:
+        raise ValueError(f"Gagal mengunduh gambar (HTTP {e.code}).") from e
+    except URLError as e:
+        raise ValueError("Gagal mengakses URL gambar.") from e
+
+
+def _prepare_image_source(raw_value, subdir):
+    image_url = _normalize_image_url(raw_value)
+    if not image_url:
+        return ""
+    if not _looks_like_image_url(image_url):
+        raise ValueError("URL gambar tidak valid. Pakai URL gambar langsung atau upload file.")
+    return _save_image_from_url(image_url, subdir)
 
 
 def _get_page(page_key, title):
@@ -340,13 +448,13 @@ def content_profil():
         setting.about_mission = _sanitize_html(request.form.get("about_mission"))
         setting.headmaster_quote = _sanitize_html(request.form.get("headmaster_quote"))
         setting.headmaster_name = _sanitize_text(request.form.get("headmaster_name"))
-        setting.headmaster_photo_url = _normalize_image_url(request.form.get("headmaster_photo_url"))
-        if setting.headmaster_photo_url and not _looks_like_image_url(setting.headmaster_photo_url):
-            flash(
-                "URL foto kepala sekolah tidak terlihat seperti direct image URL. "
-                "Gunakan link file gambar langsung (jpg/png/webp).",
-                "danger",
+        try:
+            setting.headmaster_photo_url = _prepare_image_source(
+                request.form.get("headmaster_photo_url"),
+                "headmaster",
             )
+        except ValueError as e:
+            flash(str(e), "danger")
             return redirect(url_for("admin.content_profil"))
 
         upload = request.files.get("headmaster_photo")
@@ -564,9 +672,10 @@ def content_berita():
             flash("Judul artikel wajib diisi.", "danger")
             return redirect(url_for("admin.content_berita"))
 
-        cover_url = _normalize_image_url(request.form.get("cover_url"))
-        if cover_url and not _looks_like_image_url(cover_url):
-            flash("URL cover harus berupa direct image URL (jpg/png/webp).", "danger")
+        try:
+            cover_url = _prepare_image_source(request.form.get("cover_url"), "blog")
+        except ValueError as e:
+            flash(str(e), "danger")
             return redirect(url_for("admin.content_berita"))
         upload = request.files.get("cover_photo")
         if upload and upload.filename:
@@ -620,9 +729,10 @@ def edit_berita(post_id):
         manual_slug = _sanitize_text(request.form.get("slug"))
         post.slug = _unique_slug(manual_slug or post.title, current_id=post.id)
 
-        cover_url = _normalize_image_url(request.form.get("cover_url"))
-        if cover_url and not _looks_like_image_url(cover_url):
-            flash("URL cover harus berupa direct image URL (jpg/png/webp).", "danger")
+        try:
+            cover_url = _prepare_image_source(request.form.get("cover_url"), "blog")
+        except ValueError as e:
+            flash(str(e), "danger")
             return redirect(url_for("admin.edit_berita", post_id=post.id))
         if cover_url:
             post.cover_url = cover_url
@@ -749,9 +859,10 @@ def content_media():
         category = _sanitize_text(request.form.get("category") or "Kegiatan")
         teacher_subject = request.form.get("teacher_subject")
         title = _compose_media_title(title, category, teacher_subject)
-        image_url = _normalize_image_url(request.form.get("image_url"))
-        if image_url and not _looks_like_image_url(image_url):
-            flash("URL gambar harus berupa direct image URL (jpg/png/webp).", "danger")
+        try:
+            image_url = _prepare_image_source(request.form.get("image_url"), "gallery")
+        except ValueError as e:
+            flash(str(e), "danger")
             return redirect(url_for("admin.content_media"))
 
         upload = request.files.get("gallery_photo")
@@ -790,9 +901,10 @@ def edit_media(item_id):
             request.form.get("teacher_subject"),
         )
         item.category = form_category
-        image_url = _normalize_image_url(request.form.get("image_url"))
-        if image_url and not _looks_like_image_url(image_url):
-            flash("URL gambar harus berupa direct image URL (jpg/png/webp).", "danger")
+        try:
+            image_url = _prepare_image_source(request.form.get("image_url"), "gallery")
+        except ValueError as e:
+            flash(str(e), "danger")
             return redirect(url_for("admin.edit_media", item_id=item.id))
         if image_url:
             item.image_url = image_url
@@ -837,9 +949,10 @@ def content_testimoni():
             flash("Nama dan isi testimoni wajib diisi.", "danger")
             return redirect(url_for("admin.content_testimoni"))
 
-        photo_url = _normalize_image_url(request.form.get("photo_url"))
-        if photo_url and not _looks_like_image_url(photo_url):
-            flash("URL foto testimoni harus berupa direct image URL (jpg/png/webp).", "danger")
+        try:
+            photo_url = _prepare_image_source(request.form.get("photo_url"), "testimonials")
+        except ValueError as e:
+            flash(str(e), "danger")
             return redirect(url_for("admin.content_testimoni"))
         upload = request.files.get("testimonial_photo")
         if upload and upload.filename:
@@ -873,9 +986,10 @@ def edit_testimoni(item_id):
         item.name = _sanitize_text(request.form.get("name") or item.name)
         item.role = _sanitize_text(request.form.get("role") or item.role)
         item.quote = _sanitize_text(request.form.get("quote") or item.quote)
-        photo_url = _normalize_image_url(request.form.get("photo_url"))
-        if photo_url and not _looks_like_image_url(photo_url):
-            flash("URL foto testimoni harus berupa direct image URL (jpg/png/webp).", "danger")
+        try:
+            photo_url = _prepare_image_source(request.form.get("photo_url"), "testimonials")
+        except ValueError as e:
+            flash(str(e), "danger")
             return redirect(url_for("admin.edit_testimoni", item_id=item.id))
         if photo_url:
             item.photo_url = photo_url
