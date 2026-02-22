@@ -56,6 +56,13 @@ Catatan:
 4. Jalankan stack:
    - `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`
 
+Catatan penting media upload:
+- Foto upload admin disimpan di `app/static/uploads/media` dan dipersist lewat Docker volume `media_uploads`.
+- Saat fresh deploy dari git, file media lama dari mesin lain tidak otomatis ada di server.
+- Jika DB sudah berisi URL `/static/uploads/media/...` tapi file belum ada di volume server, gambar akan 404.
+- Lakukan sync media lama (contoh):
+  - `docker cp ./app/static/uploads/media/. sekolah_app:/app/app/static/uploads/media/`
+
 ## Operasional
 - Lihat status:
   - `docker compose -f docker-compose.yml -f docker-compose.prod.yml ps`
