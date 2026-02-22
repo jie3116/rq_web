@@ -4,7 +4,6 @@ services:
       context: .
       dockerfile: Dockerfile
     image: sekolah_app_image:latest
-    container_name: sekolah_app
     restart: always
     init: true
     env_file:
@@ -13,13 +12,12 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - media_uploads:/app/app/static/uploads/media
+      - ./app/static:/app/app/static
     security_opt:
       - no-new-privileges:true
 
   db:
     image: postgres:15
-    container_name: sekolah_db
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
